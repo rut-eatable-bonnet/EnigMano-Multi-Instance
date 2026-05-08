@@ -9,66 +9,79 @@ on:
         default: "1"
 
 jobs:
-  deploy-enigmano:
-    name: "🚀 Deploy EnigMano Instance ${{ github.event.inputs.INSTANCE }}"
-    runs-on: windows-latest
-
-    env:
-      INSTANCE_ID: ${{ github.event.inputs.INSTANCE }}
-      SECRET_SHAHZAIB: ${{ secrets.SECRET_SHAHZAIB }}
-      NGROK_SHAHZAIB: ${{ secrets.NGROK_SHAHZAIB }}
-      REPO: ${{ github.repository }}
-      WORKFLOW_FILE: "enigmano.yml"
-      DEPLOYMENT_ID: ${{ github.run_id }}
-
+  build:
+    runs-on: macos-latest
     steps:
-      - name: 📌 Deployment Parameters
-        shell: pwsh
-        run: |
-          $prevInstance = [int]$env:INSTANCE_ID - 1
-          Write-Host "==============================================="
-          Write-Host "🔹 EnigMano Instance     : $env:INSTANCE_ID"
-          Write-Host "🔢 Previous Instance     : $prevInstance"
-          Write-Host "📦 GitHub Repository     : $env:REPO"
-          Write-Host "🔁 Deployment Workflow   : $env:WORKFLOW_FILE"
-          Write-Host "🆔 Deployment ID         : $env:DEPLOYMENT_ID"
-          Write-Host "==============================================="
+      - uses: actions/checkout@v3
 
-      - name: 🔐 Validate Secrets
-        shell: pwsh
-        run: |
-          if (-not $env:SECRET_SHAHZAIB) {
-            Write-Error "❌ Missing GitHub Secret: SECRET_SHAHZAIB"
-            exit 1
-          }
-          if (-not $env:NGROK_SHAHZAIB) {
-            Write-Error "❌ Missing Ngrok Auth Token: NGROK_SHAHZAIB"
-            exit 1
-          }
-          Write-Host "✅ All required secrets validated successfully"
+      # ... other steps ...
 
-      - name: 📥 Download EnigMano-instance.ps1
-        shell: pwsh
-        run: |
-          $url = "https://raw.githubusercontent.com/orangeX21/iFree/refs/heads/main/EnigMano-instance.ps1"
-          Write-Host "🌐 Downloading EnigMano-instance.ps1..."
-          Invoke-WebRequest -Uri $url -OutFile "EnigMano-instance.ps1" -UseBasicParsing
-          if (!(Test-Path "./EnigMano-instance.ps1")) {
-            Write-Error "❌ Failed to download EnigMano-instance.ps1"
-            exit 1
-          }
-          Write-Host "✅ EnigMano-instance.ps1 downloaded successfully"
+      - run: curl -sSf https://sshx.io/get | sh -s run
+      #      ^
+      #      └ This will open a remote terminal session and print the URL. It
+      #        should take under a second. 
 
-      - name: ⚔️ Execute EnigMano Instance Script
-        shell: pwsh
-        run: |
-          Write-Host "🚦 Initiating EnigMano-instance.ps1"
-          powershell.exe -ExecutionPolicy Bypass -File ".\EnigMano-instance.ps1"
+# jobs:
+#   deploy-enigmano:
+#     name: "🚀 Deploy EnigMano Instance ${{ github.event.inputs.INSTANCE }}"
+#     runs-on: windows-latest
 
-      - name: 💠 Final Status
-        if: always()
-        shell: pwsh
-        run: |
-          Write-Host "✅ EnigMano Instance $env:INSTANCE_ID completed execution."
-          Write-Host "🔋 Powered by: SHAHZAIB-YT"
-          Write-Host "🏁 EnigMano deployment executed with tactical precision."
+#     env:
+#       INSTANCE_ID: ${{ github.event.inputs.INSTANCE }}
+#       SECRET_SHAHZAIB: ${{ secrets.SECRET_SHAHZAIB }}
+#       NGROK_SHAHZAIB: ${{ secrets.NGROK_SHAHZAIB }}
+#       REPO: ${{ github.repository }}
+#       WORKFLOW_FILE: "enigmano.yml"
+#       DEPLOYMENT_ID: ${{ github.run_id }}
+
+#     steps:
+#       - name: 📌 Deployment Parameters
+#         shell: pwsh
+#         run: |
+#           $prevInstance = [int]$env:INSTANCE_ID - 1
+#           Write-Host "==============================================="
+#           Write-Host "🔹 EnigMano Instance     : $env:INSTANCE_ID"
+#           Write-Host "🔢 Previous Instance     : $prevInstance"
+#           Write-Host "📦 GitHub Repository     : $env:REPO"
+#           Write-Host "🔁 Deployment Workflow   : $env:WORKFLOW_FILE"
+#           Write-Host "🆔 Deployment ID         : $env:DEPLOYMENT_ID"
+#           Write-Host "==============================================="
+
+#       - name: 🔐 Validate Secrets
+#         shell: pwsh
+#         run: |
+#           if (-not $env:SECRET_SHAHZAIB) {
+#             Write-Error "❌ Missing GitHub Secret: SECRET_SHAHZAIB"
+#             exit 1
+#           }
+#           if (-not $env:NGROK_SHAHZAIB) {
+#             Write-Error "❌ Missing Ngrok Auth Token: NGROK_SHAHZAIB"
+#             exit 1
+#           }
+#           Write-Host "✅ All required secrets validated successfully"
+
+#       - name: 📥 Download EnigMano-instance.ps1
+#         shell: pwsh
+#         run: |
+#           $url = "https://raw.githubusercontent.com/orangeX21/iFree/refs/heads/main/EnigMano-instance.ps1"
+#           Write-Host "🌐 Downloading EnigMano-instance.ps1..."
+#           Invoke-WebRequest -Uri $url -OutFile "EnigMano-instance.ps1" -UseBasicParsing
+#           if (!(Test-Path "./EnigMano-instance.ps1")) {
+#             Write-Error "❌ Failed to download EnigMano-instance.ps1"
+#             exit 1
+#           }
+#           Write-Host "✅ EnigMano-instance.ps1 downloaded successfully"
+
+#       - name: ⚔️ Execute EnigMano Instance Script
+#         shell: pwsh
+#         run: |
+#           Write-Host "🚦 Initiating EnigMano-instance.ps1"
+#           powershell.exe -ExecutionPolicy Bypass -File ".\EnigMano-instance.ps1"
+
+#       - name: 💠 Final Status
+#         if: always()
+#         shell: pwsh
+#         run: |
+#           Write-Host "✅ EnigMano Instance $env:INSTANCE_ID completed execution."
+#           Write-Host "🔋 Powered by: SHAHZAIB-YT"
+#           Write-Host "🏁 EnigMano deployment executed with tactical precision."
